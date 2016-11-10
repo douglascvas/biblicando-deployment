@@ -1,0 +1,4 @@
+- name: Prepare Docker file
+  template: src=/DOCKERFILE dest=/src/DOCKERFILE
+# owner=bin group=wheel mode=0644
+# https://github.com/douglascvas/configurator/archive/22398b80db671e24fb79d93495f0475dc4433b0c.zip

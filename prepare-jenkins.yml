@@ -1,0 +1,11 @@
+---
+
+- hosts: all
+  remote_user: root
+  sudo: yes
+  vars:
+  - pip_version_docker_py: 1.9.0
+  - apt_repository: deb https://apt.dockerproject.org/repo ubuntu-xenial main
+  roles:
+#  - role: docker
+  - role: jenkins

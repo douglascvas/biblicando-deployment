@@ -1,0 +1,18 @@
+- name: check if mongodb data volume exists
+  command: docker volume inspect mongodb_data
+  register: mongodb_data_exists
+  failed_when: false
+
+- name: create mongodb data volume
+  command: docker volume create --name mongodb_data
+  when: mongodb_data_exists|failed
+
+- name: Start MongoDB
+  docker:
+    name: biblicando-mongodb
+    image: mvertes/alpine-mongo
+    state: started
+    ports:
+    - "27017:27017"
+    volumes:
+    - "mongodb_data:/data/db"

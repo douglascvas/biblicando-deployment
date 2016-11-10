@@ -1,0 +1,6 @@
+jenkins_home: /var/jenkins_home
+jenkins_http_port: 8080
+
+jenkins_admin_username: admin
+jenkins_admin_password: admin
+jenkins_admin_password_file: ""

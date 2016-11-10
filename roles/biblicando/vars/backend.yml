@@ -1,0 +1,8 @@
+environment_variables:
+  - "DB_HOST={{db_host}}"
+  - "DB_USERNAME={{db_username}}"
+  - "DB_PASSWORD={{db_password}}"
+  - "REDIS_HOST={{redis_host}}"
+  - "REDIS_PORT={{redis_port}}"
+  - "CACHE_CONFIG_FILE={{cache_config_file}}"
+  - "BIBLES_ORG_TOKEN={{bibles_org_token}}"

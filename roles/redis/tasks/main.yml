@@ -1,0 +1,8 @@
+- name: Start Redis
+  docker:
+    name: biblicando-redis
+    image: redis:alpine
+    command: redis-server --appendonly yes
+    state: started
+    ports:
+    - "6379:6379"

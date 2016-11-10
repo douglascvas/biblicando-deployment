@@ -1,0 +1,16 @@
+- name: check if npm cache volume exists
+  command: docker volume inspect npm_cache
+  register: npm_cache_exists
+  failed_when: false
+
+- name: create npm cache volume
+  command: docker volume create --name npm_cache
+  when: npm_cache_exists|failed
+
+- name: Create the application container image
+  docker_image:
+    path: "{{role_path}}/templates"
+    name: biblicando/app
+    state: present
+    tag: latest
+    push: no
