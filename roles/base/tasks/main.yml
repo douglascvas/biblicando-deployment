@@ -10,7 +10,7 @@
 - name: Create the application container image
   docker_image:
     path: "{{role_path}}/templates"
-    name: biblicando/app
+    name: biblicando/base
     state: present
     tag: latest
     push: no
