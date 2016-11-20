@@ -1,0 +1,2 @@
+base_biblicando_image_path: /tmp/biblicando
+npm_cache_volume_path: /data/npm_cache

@@ -8,19 +8,18 @@ RUN echo http://dl-6.alpinelinux.org/alpine/edge/community >> /etc/apk/repositor
     && apk add docker \
     && apk add openrc --no-cache
 
-RUN mkdir /data
-VOLUME /data
+VOLUME /tmp
 
-USER jenkins
+#USER jenkins
 
 RUN /usr/local/bin/install-plugins.sh \
     job-dsl \
     nodejs \
     github \
-    docker-custom-build-environment \
     build-pipeline-plugin \
     javadoc \
     async-http-client \
     gradle \
     groovy \
-    git
+    git \
+    docker-commons

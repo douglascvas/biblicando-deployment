@@ -1,0 +1,3 @@
+- name: print jenkins admin password
+  debug: msg="Initial admin password is {{ initial_jenkins_password.stdout }}"
+  listen: "print jenkins admin password"

@@ -4,6 +4,15 @@
 - name: Copy jenkins dockerfile
   template: src=Dockerfile dest=/tmp/jenkins/Dockerfile force=yes
 
+- name: check if jenkins_home volume exists
+  command: "docker inspect -f '{{ '{{' }} .Id {{ '}}' }}' jenkins_home"
+  register: jenkins_home_exists
+  failed_when: false
+
+- name: create jenkins_home volume
+  command: docker create -v /var/jenkins_home --name jenkins_home alpine /bin/true
+  when: jenkins_home_exists|failed
+
 - name: Create the jenkins container image
   docker_image:
     path: /tmp/jenkins
@@ -12,32 +21,35 @@
     tag: latest
     push: no
 
-- name: Create a jenkins data container
-  docker_container:
-    name: jenkins_home
-    image: alpine
-    state: present
-    entrypoint: /bin/true
-    volumes:
-      - "/var/jenkins_home"
-
 - name: Create a Jenkins container
   docker_container:
     name: jenkins
     image: biblicando/jenkins
     state: started
     restart: no
-    volumes_from:
-      - jenkins_home
     ports:
       - "8080:{{ jenkins_http_port }}"
       - "50000:50000"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
+    volumes_from:
+      - "jenkins_home"
+    env:
+      JAVA_OPTS="-Dit.dockins.dockerslaves.spi.DockerDriver.verbose=true"
+#  notify:
+#    - "print jenkins admin password"
+  changed_when: true
 
-- name: Print initial admin password
-  command: docker run --rm --volumes-from jenkins_home alpine cat /var/jenkins_home/secrets/initialAdminPassword
+- name: copy plugins to jenkins home
+  command: "docker run --rm --volumes-from jenkins_home -v {{role_path}}/files/plugins:/data/jenkins alpine sh -c 'cp /data/jenkins/* /var/jenkins_home/plugins'"
+
+- name: get jenkins admin password
+  command: "docker run --rm --volumes-from jenkins_home alpine sh -c 'cat /var/jenkins_home/secrets/initialAdminPassword'"
   register: initial_jenkins_password
-
-- name: Print initial admin password
-  debug: msg="Initial admin password is {{ initial_jenkins_password.stdout }}"
+  until: initial_jenkins_password.rc == 0
+  retries: 10
+  delay: 5
+  ignore_errors: yes
+  notify:
+    - "print jenkins admin password"
+  changed_when: true

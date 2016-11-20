@@ -1,15 +1,21 @@
-- name: check if npm cache volume exists
-  command: docker volume inspect npm_cache
+- name: Create tmp biblicando directory
+  file: path="{{base_biblicando_image_path}}" state=directory mode=0777
+
+- name: Copy base biblicando dockerfile
+  template: src=Dockerfile dest="{{base_biblicando_image_path}}/Dockerfile" force=yes
+
+- name: check if jenkins_home volume exists
+  command: "docker inspect -f '{{ '{{' }} .Id {{ '}}' }}' npm_cache"
   register: npm_cache_exists
   failed_when: false
 
-- name: create npm cache volume
-  command: docker volume create --name npm_cache
+- name: create npm_cache volume
+  command: docker create -v {{npm_cache_volume_path}} --name npm_cache alpine /bin/true
   when: npm_cache_exists|failed
 
 - name: Create the application container image
   docker_image:
-    path: "{{role_path}}/templates"
+    path: "{{base_biblicando_image_path}}"
     name: biblicando/base
     state: present
     tag: latest
